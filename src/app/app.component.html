@@ -1,3 +1,21 @@
-<button (click)="login()">Login</button>
+@if (!authenticated) {
+<div class="login-page">
+    <div class="login-form">
+        <div class="input">
+            <label>User Name</label>
+            <input [(ngModel)]="username">
+        </div>
 
-<button (click)="logout()">Logout</button>
+        <div class="input">
+            <label>Password</label>
+            <input [(ngModel)]="password">
+        </div>
+        <button (click)="login()">Login</button>
+        <button (click)="ssoLogin()">Login SSO</button>
+    </div>
+</div>
+} @else {
+
+<button (click)="ssoLogout()">Logout</button>
+
+}

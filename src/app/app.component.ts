@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import Keycloak from 'keycloak-js';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, FormsModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -14,7 +15,11 @@ export class AppComponent {
 
   keycloak!: Keycloak;
 
+  username = 'krsajith';
+  password = 'password';
+
   title = 'keycloak-angular-example';
+  authenticated = false;
 
   constructor() {
     this.init();
@@ -39,18 +44,20 @@ export class AppComponent {
 
 
     try {
-      const authenticated = await this.keycloak.init({});
+      this.authenticated = await this.keycloak.init({});
+      console.log(`User is ${this.authenticated ? 'authenticated' : 'not authenticated'}`);
+      if (this.authenticated) {
+        console.log(this.keycloak.token);
 
+      }
 
-
-
-      console.log(`User is ${authenticated ? 'authenticated' : 'not authenticated'}`);
     } catch (error) {
       console.error('Failed to initialize adapter:', error);
     }
   }
 
-  async login() {
+  //Login with default provider configured in key clock
+  async ssoLogin() {
 
     const result = await this.keycloak.login({
       scope: 'openid',
@@ -61,9 +68,34 @@ export class AppComponent {
 
   }
 
-  async logout() {
+  async ssoLogout() {
     const result = this.keycloak.logout({ redirectUri: 'http://localhost:4200' });
     console.log(result);
+  }
 
+  async login() {
+
+
+    const url = "http://localhost:8080/auth/realms/taomish/protocol/openid-connect/token";
+
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: `client_id=taomish-service&password=${this.password}&username=${this.username}&grant_type=password`,
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded",
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+    if(response){
+      const s = await response.text();
+      console.log(s);
+      
+      // response.body.getReader().read().then(function (data) {
+      //   var string = new TextDecoder("utf-8").decode(data.value);
+      //   console.log(string);
+      // });
+  
+    }
   }
 }
