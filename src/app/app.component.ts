@@ -15,8 +15,8 @@ export class AppComponent {
 
   keycloak!: Keycloak;
 
-  username = 'krsajith';
-  password = 'password';
+  username = 'alice';
+  password = 'alice';
 
   title = 'keycloak-angular-example';
   authenticated = false;
@@ -48,7 +48,6 @@ export class AppComponent {
       console.log(`User is ${this.authenticated ? 'authenticated' : 'not authenticated'}`);
       if (this.authenticated) {
         console.log(this.keycloak.token);
-
       }
 
     } catch (error) {
@@ -76,12 +75,12 @@ export class AppComponent {
   async login() {
 
 
-    const url = "http://localhost:8080/auth/realms/taomish/protocol/openid-connect/token";
+    const url = "http://localhost:8080/realms/quickstart/protocol/openid-connect/token";
 
 
     const response = await fetch(url, {
       method: "POST",
-      body: `client_id=taomish-service&password=${this.password}&username=${this.username}&grant_type=password`,
+      body: `client_id=spa&password=${this.password}&username=${this.username}&grant_type=password`,
       headers: {
         "Content-type": "application/x-www-form-urlencoded",
         'Access-Control-Allow-Origin': '*'
